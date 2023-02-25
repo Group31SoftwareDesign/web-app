@@ -2,36 +2,30 @@
 <html>
 <head>
 	<title>Account Registration</title>
-  <link rel="stylesheet" type="text/css" href="stylesheet.css">
+	<link rel="stylesheet" type="text/css" href="styles.css">
 </head>
-<body>
+<body class="registration-page">
 
-	<h1>Registration</h1>
+	<h1 class="registration-page">Registration</h1>
 
 	<form method="POST" action="register.php">
-		<label for="username">Username:</label>
-		<input type="text" id="username" name="username" required><br>
+		<label for="username" class="registration-page">Username:</label>
+		<input type="text" id="username" name="username" required class="registration-page"><br>
 
-		<label for="password">Password:</label>
-		<input type="password" id="password" name="password" required><br>
+		<label for="password" class="registration-page">Password:</label>
+		<input type="password" id="password" name="password" required class="registration-page"><br>
 
-		<label for="email">Email:</label>
-		<input type="email" id="email" name="email" required><br>
+		<label for="email" class="registration-page">Email:</label>
+		<input type="email" id="email" name="email" required class="registration-page"><br>
 
-		<label for="firstname">First Name:</label>
-		<input type="text" id="firstname" name="firstname" required><br>
+		<label for="firstname" class="registration-page">First Name:</label>
+		<input type="text" id="firstname" name="firstname" required class="registration-page"><br>
 
-		<label for="lastname">Last Name:</label>
-		<input type="text" id="lastname" name="lastname" required><br>
+		<label for="lastname" class="registration-page">Last Name:</label>
+		<input type="text" id="lastname" name="lastname" required class="registration-page"><br>
 
-		<button onclick="goToPage()">Go to Page 2 <type="submit">Register</button>
-        
+		<button type="submit" class="registration-page">Register</button>
 	</form>
-    <script>
-            function goToPage() {
-                window.location.href = "index.html"; // Replace "page2.html" with the file path of the HTML page you want to link to...
-            }
-        </script>
 
 </body>
 </html>
