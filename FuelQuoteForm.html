@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Fuel Quote Form</title>
+</head>
+<body>
+	<div class="topnav">
+		<a class="active" href="#home">Home</a>
+		<a href="#Fuel Quote Form">Fuel Quote Form</a>
+		<a href="#Fuel Purchase History">Fuel Purchase History</a>
+		<a href="#Login">Login</a>
+	  </div>       
+	<h1>Fuel Quote Form</h1>
+
+	<form action="#" method="post">
+		<label for="gallons_requested">Gallons Requested:</label>
+		<input type="number" id="gallons_requested" name="gallons_requested" required>
+
+		<label for="street_address">Street Address:</label>
+		<input type="text" id="street_address" name="street_address" required>
+
+		<label for="city">City:</label>
+		<input type="text" id="city" name="city" required>
+
+		<label for="state">State:</label>
+		<select id="state" name="state" required>
+			<option value=""></option>
+			<option value="AL">Alabama</option>
+			<option value="AK">Alaska</option>
+			<!-- more options here... -->
+			<option value="WY">Wyoming</option>
+		</select>
+
+		<label for="zip_code">Zip Code:</label>
+		<input type="text" id="zip_code" name="zip_code" required>
+
+		<label for="delivery_date">Delivery Date:</label>
+		<input type="date" id="delivery_date" name="delivery_date">
+
+		<label for="suggested_price">Suggested Price / Gallon:</label>
+		<input type="number" id="suggested_price" name="suggested_price" readonly>
+
+		<input type="submit" value="Submit">
+	</form>
+
+	<hr>
+
+</body>
+</html>
