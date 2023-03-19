@@ -25,11 +25,12 @@ ul {
 }
 
 .navbar {
-	/* display: flex; */
 	list-style: none;
+
 }
 
 .navbar a {
+	display: flex;
 	float: right;
 	font-size: 17px;
 	color: #f2f2f2;
@@ -132,3 +133,11 @@ input[type="submit"]:hover {
 .register {
 	text-align: center;
   }
+
+.register a {
+	text-decoration: none;
+  }
+
+.register a:hover {
+	text-decoration: underline;
+}

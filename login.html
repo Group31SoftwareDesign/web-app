@@ -12,6 +12,7 @@
         <!-- Navbar content -->
       <ul class="navbar">
         <!-- <li><a class="nav-item nav-link" href="#Home">Home</a> </li> -->
+       <!--- <li><a href="#Home"> <img id="logo" src="PUMP_PRICE_PRO.png"></a></li> -->
         <li><a href="#Fuel Quote Form">Fuel Quote Form</a> </li>
         <li><a href="#Fuel Purchase History">Fuel Purchase History</a></li>
         <li><a class="active" href="#Login">Login</a></li> 
@@ -25,25 +26,11 @@
       <label for="password">Password:</label>
       <input type="password" id="password" name="password" required> <br> </br>
       <input type="submit" value="Login">
-      <div class="container register">
-      <p>Don't have an account? <a href="#">Register here</a></p>
+      <div class="register">
+      <p>Don't have an account? <a href="#" id="linkRegister">Register here</a></p>
       </div>  
     </form>
 
-    <script>
-      const form = document.querySelector('form');
-      form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        login(username, password);
-      });
-
-      function login(username, password) {
-        // Sample login function that logs the input values to the console
-        console.log(`Username: ${username}, Password: ${password}`);
-        // Replace with your actual login logic here
-      }
-    </script>
+    <script src="form.js"></script>
   </body>
 </html> 
