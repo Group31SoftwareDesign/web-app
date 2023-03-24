@@ -1,8 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+* {
+	margin: 0;
+	padding: 0;
+	font-family: 'Poppins', sans-serif;
+}
+
 body {
 	font-family: Arial, sans-serif;
 	background-color: #f5f5f5;
 	margin: 0;
 	padding: 0;
+	background-image: url('./fossil-fuel3.jpeg');
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	height: 100vh; 
 }
 
 h1 {
@@ -11,6 +23,15 @@ h1 {
 	margin: 1em 0;
 	color: #333;
 }
+
+/*.background-image {
+	background-image: url('./fossil-fuel3.jpeg');
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	height: 100vh;
+}
+*/
 
 /* navigation bar */
 header {
@@ -50,13 +71,15 @@ ul {
 
 /* end of navbar */
 
-form {
+form{
 	background-color: #fff;
 	border-radius: 5px;
 	box-shadow: 0 0 5px rgba(0,0,0,0.1);
 	padding: 2em;
 	margin: 2em auto;
 	max-width: 600px;
+	border-radius: 10px;
+
 }
 
 label {
@@ -120,6 +143,12 @@ button.registration-page:hover {
 
 
 /* Styles for login page */
+
+.login-form {
+	padding-bottom: 40px;
+	
+}
+
 input[type="submit"] {
 	background-color: #4caf50;
 	color: white;
@@ -140,4 +169,9 @@ input[type="submit"]:hover {
 
 .register a:hover {
 	text-decoration: underline;
+}
+
+.form input[type=submit] {
+	border-radius: 15px;
+	cursor: pointer;
 }
