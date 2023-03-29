@@ -5,7 +5,17 @@
 	font-family: 'Poppins', sans-serif;
 }
 
+.no-style {
+	all: unset;
+}
 
+.no-style2 {
+	margin: 0;
+	padding: 0;
+	border: none;
+	background-color: transparent;
+	/* add any other styles you want to remove */
+  }
 body {
 	font-family: Arial, sans-serif;
 	background-color: #f5f5f5;

@@ -58,6 +58,10 @@ app.get('/FuelQuoteForm', checkAuthenticated, (req, res) => {
   res.render('FuelQuoteForm.ejs')
 })
 
+app.get('/ProfileManager', checkAuthenticated, (req, res) => {
+  res.render('ProfileManager.ejs')
+})
+
 app.get('/FuelPurchaseHistory', checkAuthenticated, (req, res) => {
   res.render('FuelPurchaseHistory.ejs')
 })
