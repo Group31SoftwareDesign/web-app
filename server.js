@@ -30,10 +30,15 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(methodOverride('_method'))
+app.use(express.static(__dirname + '/public'));
 
 app.get('/', checkAuthenticated, (req, res) => {
   res.render('index.ejs', { name: req.user.name })
-})
+});
+
+app.get('/public/css/styles.css', (req, res) => {
+  res.sendFile(__dirname + '/public/css/styles.css');
+});
 
 app.get('/login', checkNotAuthenticated, (req, res) => {
   res.render('login.ejs')

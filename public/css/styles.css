@@ -5,6 +5,7 @@
 	font-family: 'Poppins', sans-serif;
 }
 
+console.log("works")
 body {
 	font-family: Arial, sans-serif;
 	background-color: #f5f5f5;
@@ -24,14 +25,7 @@ h1 {
 	color: #333;
 }
 
-/*.background-image {
-	background-image: url('./fossil-fuel3.jpeg');
-	background-size: cover;
-	background-repeat: no-repeat;
-	background-position: center;
-	height: 100vh;
-}
-*/
+
 
 /* navigation bar */
 header {
