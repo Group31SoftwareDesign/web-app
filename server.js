@@ -38,7 +38,8 @@ app.get('/', checkAuthenticated, (req, res) => {
 
     // find the user with the matching email address
     const user = users.find(user => user.email === email)
-  res.render('index.ejs', {user})
+    const purchaseHistory = user.purchaseHistory
+  res.render('index.ejs', {user, purchaseHistory})
 });
 
 app.get('/public/css/styles.css', (req, res) => {
@@ -68,8 +69,11 @@ app.get('/ProfileManager', checkAuthenticated, (req, res) => {
 })
 
 app.get('/FuelPurchaseHistory', checkAuthenticated, (req, res) => {
-  res.render('FuelPurchaseHistory.ejs')
-})
+  const email = req.user.email;
+  const user = users.find(user => user.email === email);
+  const purchaseHistory = user.purchaseHistory;
+  res.render('FuelPurchaseHistory.ejs', { user, purchaseHistory });
+});
 
 app.post('/register', checkNotAuthenticated, async (req, res) => {
   try {
@@ -84,13 +88,42 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
       address2: req.body.address2,
       city: req.body.city,
       state: req.body.state,
-      zipcode: req.body.zipcode
+      zipcode: req.body.zipcode,
+      purchaseHistory: [
+        {
+          date: '',
+          delivery_address: '',
+          gallons: '',
+          price: '',
+          total: ''
+        }
+      ]
     })
     res.redirect('/login')
   } catch {
     res.redirect('/register')
   }
 })
+
+app.post('/submit-fuel-quote', checkAuthenticated, (req, res) => {
+  // Get the user's email address from the session
+  const email = req.user.email;
+
+  // Get the submitted data from the form
+  const submission = {
+    date: new Date(),
+    delivery_address: req.body.delivery_address,
+    total: req.body.total,
+    gallons: req.body.gallons,
+    price: req.body.price,
+  };
+
+  // Update the user's purchase history
+  updateUserPurchaseHistory(email, submission);
+
+  // Redirect to the purchase history page
+  res.redirect('/FuelPurchaseHistory');
+});
 
 app.post('/update-profile', checkAuthenticated, (req, res) => {
   // get the user's email address from the session
@@ -120,6 +153,7 @@ function updateUser(email, updates) {
   // update the user's attributes with the new values
   if (user) {
     Object.assign(user, updates)
+    
   }
 }
 
@@ -129,6 +163,16 @@ app.delete('/logout', (req, res) => {
     res.redirect('/login');
   });
 });
+
+function updateUserPurchaseHistory(email, submission) {
+  // Find the user with the matching email
+  const user = users.find(user => user.email === email);
+
+  // Update the user's purchase history with the new submission
+  if (user) {
+    user.purchaseHistory.push(submission);
+  }
+}
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
