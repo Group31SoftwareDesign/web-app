@@ -54,6 +54,14 @@ app.get('/register', checkNotAuthenticated, (req, res) => {
   res.render('register.ejs')
 })
 
+app.get('/FuelQuoteForm', checkAuthenticated, (req, res) => {
+  res.render('FuelQuoteForm.ejs')
+})
+
+app.get('/FuelPurchaseHistory', checkAuthenticated, (req, res) => {
+  res.render('FuelPurchaseHistory.ejs')
+})
+
 app.post('/register', checkNotAuthenticated, async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10)

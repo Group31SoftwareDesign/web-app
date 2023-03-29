@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Account Registration</title>
+  <link rel="stylesheet" href="/public/css/styles.css" type="text/css">
+
+</head>
+<body>
+	<header>
+		<!-- Navbar content -->
+	  <ul class="navbar">
+		<!-- <li><a class="nav-item nav-link" href="#Home">Home</a> </li> -->
+	   <!-- <li><a href="#Home"> <img id="logo" src="PUMP_PRICE_PRO.png"></a></li> -->
+		<li><a href="/FuelQuoteForm">Fuel Quote Form</a> </li>
+		<li><a href="/FuelPurchaseHistory">Fuel Purchase History</a></li>
+		<li><a href="login.html">Home</a></li> 
+        <form action="/logout?_method=DELETE" method = "POST">
+			<button type="submit">Log Out</button>
+		</form>
+	  </ul> 
+	</header>
+
+	<h1>Purchase History</h1>
+
+	<form action="#" method="get">
+		<label for="username">Username:</label>
+		<input type="text" id="username" name="username" required>
+
+		<input type="submit" value="Search">
+
+	</form>
+
+	<h2>Past Purchase History</h2>
+	<div id="purchase_history">
+		<p>
+			<ol>
+			<li>
+			Delivery Date: xx/xx/xxxx <br></br>
+			User: xxxxxxxx <br></br>
+		   Purchased: xxx Gallons  <br></br>
+		   Location: xxxxxxx,xx <br></br>
+			</li>
+			</ol>
+		</p>
+	</div>
+
+</body>
+
+
+
+
+
+</html>
+
+	
+
