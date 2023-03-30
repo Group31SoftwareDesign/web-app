@@ -18,7 +18,7 @@ initializePassport(
 )
 
 const users = []
-
+module.exports = app;
 app.set('view-engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
 app.use(flash())
@@ -50,12 +50,6 @@ app.get('/login', checkNotAuthenticated, (req, res) => {
   res.render('login.ejs')
 })
 
-app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-  successRedirect: '/',
-  failureRedirect: '/login',
-  failureFlash: true
-}))
-
 app.get('/register', checkNotAuthenticated, (req, res) => {
   res.render('register.ejs')
 })
@@ -74,6 +68,13 @@ app.get('/FuelPurchaseHistory', checkAuthenticated, (req, res) => {
   const purchaseHistory = user.purchaseHistory;
   res.render('FuelPurchaseHistory.ejs', { user, purchaseHistory });
 });
+
+
+app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: '/login',
+  failureFlash: true
+}))
 
 app.post('/register', checkNotAuthenticated, async (req, res) => {
   try {
@@ -99,17 +100,15 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
         }
       ]
     })
-    res.redirect('/login')
+    res.status(302).redirect('/login')
   } catch {
     res.redirect('/register')
   }
 })
 
 app.post('/submit-fuel-quote', checkAuthenticated, (req, res) => {
-  // Get the user's email address from the session
   const email = req.user.email;
 
-  // Get the submitted data from the form
   const submission = {
     date: new Date(),
     delivery_address: req.body.delivery_address,
@@ -118,18 +117,14 @@ app.post('/submit-fuel-quote', checkAuthenticated, (req, res) => {
     price: req.body.price,
   };
 
-  // Update the user's purchase history
   updateUserPurchaseHistory(email, submission);
 
-  // Redirect to the purchase history page
   res.redirect('/FuelPurchaseHistory');
 });
 
 app.post('/update-profile', checkAuthenticated, (req, res) => {
-  // get the user's email address from the session
   const email = req.user.email
 
-  // get the updates from the form data
   const updates = {
     fullname: req.body.fullname,
     address1: req.body.address1,
@@ -139,23 +134,10 @@ app.post('/update-profile', checkAuthenticated, (req, res) => {
     zipcode: req.body.zipcode
   }
 
-  // update the user's information
   updateUser(email, updates)
 
-  // redirect to the user's profile page
   res.redirect('/')
 })
-
-function updateUser(email, updates) {
-  // find the user with the matching email
-  const user = users.find(user => user.email === email)
-
-  // update the user's attributes with the new values
-  if (user) {
-    Object.assign(user, updates)
-    
-  }
-}
 
 app.delete('/logout', (req, res) => {
   console.log('logout route called');
@@ -164,11 +146,19 @@ app.delete('/logout', (req, res) => {
   });
 });
 
+
+function updateUser(email, updates) {
+  const user = users.find(user => user.email === email)
+
+  if (user) {
+    Object.assign(user, updates)
+    
+  }
+}
+
 function updateUserPurchaseHistory(email, submission) {
-  // Find the user with the matching email
   const user = users.find(user => user.email === email);
 
-  // Update the user's purchase history with the new submission
   if (user) {
     user.purchaseHistory.push(submission);
   }
@@ -189,4 +179,6 @@ function checkNotAuthenticated(req, res, next) {
   next()
 }
 
-app.listen(3000)
+if (!module.parent) {
+  app.listen(3000);
+}
