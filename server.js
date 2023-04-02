@@ -9,15 +9,58 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 const methodOverride = require('method-override')
-
+const mongoose = require('mongoose')
 const initializePassport = require('./passport-config')
+const User = require("./User")
+mongoose.connect("mongodb+srv://amcruz8:alex1009@atlascluster.yhr0sni.mongodb.net/?retryWrites=true&w=majority")
+  .then(() => console.log("connected"))
+  .catch((e) => console.error(e));
 initializePassport(
   passport,
   email => users.find(user => user.email === email),
   id => users.find(user => user.id === id)
 )
 
+// const user1 = new User({
+//   email: "a@a",
+//   name:"Kyle"
+// })
+// user1.save().then(()=> console.log("User saved"))
+// console.log(user1)
 const users = []
+
+
+// video start
+run()
+async function run(){
+  try{
+    // const user1 = await User.findById("6429136c4e7e819c1726a050")
+    const user1 = await User.find({name: "Kyle"})
+    // const user1 = await User.create({
+    //   email: "a@a",
+    //   name:"Kyle",
+    //   password: "a",
+    //   hobbies: ["Weight lifting", "Bowling"],
+    //   address:{
+    //     street: "Main St."
+    //   },
+    //   age: 5
+    // })
+    // user1.name = "Sally"
+    // await user1.save()
+    console.log(user1)
+  }catch(e){
+    console.log(e.message)
+  }
+}
+
+
+
+
+
+
+
+
 module.exports = app;
 app.set('view-engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
