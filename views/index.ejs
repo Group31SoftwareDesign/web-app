@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Account Registration</title>
+  <link rel="stylesheet" href="/public/css/styles.css" type="text/css">
+
+</head>
+<body>
+	<header>
+		<!-- Navbar content -->
+	  <ul class="navbar">
+		<!-- <li><a class="nav-item nav-link" href="#Home">Home</a> </li> -->
+	   <!-- <li><a href="#Home"> <img id="logo" src="PUMP_PRICE_PRO.png"></a></li> -->
+	   <li><a href="/logout">Logout</a></li>
+		<li><a href="/FuelQuoteForm">Fuel Quote Form</a> </li>
+		<li><a href="/FuelPurchaseHistory">Fuel Purchase History</a></li>
+        <li><a href="/ProfileManager">Profile Manager</a></li>
+		<li><a href="/index">Profile</a></li>
+	  </ul> 
+	</header>
+	<h1>Profile</h1>
+  
+	<p><strong>Full Name:</strong> <%= user.fullname %></p>
+	<p><strong>Email:</strong> <%= user.email %></p>
+	<p><strong>Password:</strong> <%= user.password %></p>
+	<p><strong>Address 1:</strong> <%= user.address1 %></p>
+	<p><strong>Address 2:</strong> <%= user.address2 %></p>
+	<p><strong>City:</strong> <%= user.city %></p>
+	<p><strong>State:</strong> <%= user.state %></p>
+	<p><strong>Zipcode:</strong> <%= user.zipcode %></p>
+  
+	
+</body>
+
+
+
+
+
+</html>

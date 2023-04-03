@@ -1,0 +1,216 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+* {
+	margin: 0;
+	padding: 0;
+	font-family: 'Poppins', sans-serif;
+}
+/* styles.css */
+
+#purchase_history {
+	background-color: #f8f8f8;
+	border-radius: 5px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	margin: 20px 0;
+	padding: 20px;
+  }
+  
+  #purchase_history ol {
+	list-style-type: none;
+	padding-left: 0;
+  }
+  
+  #purchase_history li {
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 15px;
+	padding-bottom: 15px;
+  }
+  
+  #purchase_history li:last-child {
+	border-bottom: none;
+	margin-bottom: 0;
+	padding-bottom: 0;
+  }
+  
+  #purchase_history h3 {
+	font-size: 18px;
+	margin-bottom: 5px;
+  }
+  
+  #purchase_history p {
+	margin: 0 0 10px;
+  }
+  
+.no-style {
+	all: unset;
+}
+
+.no-style2 {
+	margin: 0;
+	padding: 0;
+	border: none;
+	background-color: transparent;
+	/* add any other styles you want to remove */
+  }
+body {
+	font-family: Arial, sans-serif;
+	background-color: #f5f5f5;
+	margin: 0;
+	padding: 0;
+	background-image: url('./fossil-fuel3.jpeg');
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	height: 100vh; 
+}
+
+h1 {
+	font-size: 2.5em;
+	text-align: center;
+	margin: 1em 0;
+	color: #333;
+}
+
+
+
+/* navigation bar */
+header {
+	padding: 0;
+	background-color: #333;
+	overflow: hidden;
+}
+ 
+ul {
+	margin: 0;
+	position: sticky;
+}
+
+.navbar {
+	list-style: none;
+
+}
+
+.navbar a {
+	display: flex;
+	float: right;
+	font-size: 17px;
+	color: #f2f2f2;
+	padding: 14px 16px;
+	text-decoration: none;
+}
+
+.navbar a:hover {
+	background-color: #ddd;
+	color: black;
+  }
+
+.navbar a.active {
+	background-color: #fff;
+	color: black;
+  }
+
+/* end of navbar */
+
+form{
+	background-color: #fff;
+	border-radius: 5px;
+	box-shadow: 0 0 5px rgba(0,0,0,0.1);
+	padding: 2em;
+	margin: 2em auto;
+	max-width: 600px;
+	border-radius: 10px;
+
+}
+
+label {
+	display: block;
+	font-size: 1.2em;
+	color: #333;
+	margin-bottom: 0.5em;
+}
+
+input {
+	padding: 0.5em;
+	border-radius: 5px;
+	border: 1px solid #ccc;
+	width: 100%;
+	box-sizing: border-box;
+	margin-bottom: 1em;
+	font-size: 1.2em;
+}
+
+button {
+	padding: 1em;
+	background-color: #4caf50;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	font-size: 1.2em;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+button:hover {
+	background-color: #3e8e41;
+}
+
+/* Styles for registration page only */
+
+body.registration-page {
+	background-color: #f5f5f5;
+}
+
+h1.registration-page {
+	color: #333;
+}
+
+label.registration-page {
+	color: #333;
+}
+
+input.registration-page {
+	background-color: #f5f5f5;
+	border: 1px solid #ccc;
+}
+
+button.registration-page {
+	background-color: #1e88e5;
+}
+
+button.registration-page:hover {
+	background-color: #1565c0;
+}
+
+
+/* Styles for login page */
+
+.login-form {
+	padding-bottom: 40px;
+	
+}
+
+input[type="submit"] {
+	background-color: #4caf50;
+	color: white;
+	font-weight: 500;
+}
+
+input[type="submit"]:hover {
+	background-color: #333;
+}
+
+.register {
+	text-align: center;
+  }
+
+.register a {
+	text-decoration: none;
+  }
+
+.register a:hover {
+	text-decoration: underline;
+}
+
+.form input[type=submit] {
+	border-radius: 15px;
+	cursor: pointer;
+}

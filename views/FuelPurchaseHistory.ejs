@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Account Registration</title>
+  <link rel="stylesheet" href="/public/css/styles.css" type="text/css">
+</head>
+<body>
+  <header>
+    <!-- Navbar content -->
+    <ul class="navbar">
+      <li><a href="/logout">Logout</a></li>
+      <li><a href="/FuelQuoteForm">Fuel Quote Form</a> </li>
+      <li><a href="/FuelPurchaseHistory">Fuel Purchase History</a></li>
+      <li><a href="/ProfileManager">Profile Manager</a></li>
+      <li><a href="/index">Profile</a></li>
+    </ul> 
+  </header>
+
+  <h1>Purchase History</h1>
+
+  <form class="" action="#" method="get">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+    <input type="submit" value="Search">
+  </form>
+
+  <h2>Past Purchase History</h2>
+  <div id="purchase_history">
+    <% if (purchaseHistory && purchaseHistory.length > 0) { %>
+      <ol>
+        <% purchaseHistory.forEach(purchase => { %>
+          <li>
+            Delivery Date: <%= new Date(purchase.date).toLocaleDateString() %> 
+            User: <%= user.name %> 
+            Purchased: <%= purchase.gallons %> Gallons
+            Price: <%= purchase.price %> 
+          </li>
+        <% }); %>
+      </ol>
+    <% } else { %>
+      <p>No purchase history found.</p>
+    <% } %>
+  </div>
+</body>
+</html>
