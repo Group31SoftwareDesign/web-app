@@ -57,6 +57,15 @@ const userSchema = new mongoose.Schema({
   city: { type: String },
   state: { type: String },
   zipcode: { type: String },
+  purchaseHistory: [
+    {
+      gallons: String,
+      deliveryAddress: String,
+      deliveryDate: Date,
+      pricePerGallon: String,
+      totalAmount: String
+    }
+  ]
 });
 
 const User = mongoose.model('User', userSchema);

@@ -7,6 +7,7 @@ const path = require('path');
 const User = require('./User');
 const app = express();
 const session = require('express-session');
+
 mongoose.connect("mongodb+srv://amcruz8:alex1009@atlascluster.yhr0sni.mongodb.net/?retryWrites=true&w=majority")
   .then(() => console.log("connected"))
   .catch((e) => console.error(e));
@@ -25,24 +26,6 @@ app.get('/login', (req, res) => {
   res.render('login', { messages: {} });
 });
 
-// app.post('/login', async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//       return res.render('login', { messages: { error: 'Invalid credentials' } });
-//     }
-//     const validPassword = await bcrypt.compare(password, user.password);
-//     if (!validPassword) {
-//       return res.render('login', { messages: { error: 'Invalid credentials' } });
-//     }
-//     const token = jwt.sign({ id: user._id }, 'secret', { expiresIn: '1h' });
-//     res.render('index', { messages: {}, user: { fullname: user.name, email: user.email, password: user.password } });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: 'Internal server error' });
-//   }
-// });
 
 app.post('/login', async (req, res) => {
     try {
@@ -72,17 +55,6 @@ app.get('/register', (req, res) => {
   res.render('register');
 });
 
-// app.get('/logout', (req, res) => {
-//     req.session.destroy(err => {
-//       if (err) {
-//         console.error(err);
-//         res.status(500).json({ message: 'Internal server error' });
-//       } else {
-//         res.redirect('/login');
-//       }
-//     });
-//   });
-  
 app.get('/logout', (req, res) => {
     if (req.session) {
       req.session.destroy(err => {
@@ -122,6 +94,123 @@ app.post('/register', async (req, res) => {
   }
 });
 
+app.get('/ProfileManager', async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.redirect('/login');
+      }
+  
+      const user = await User.findById(req.session.userId);
+  
+      if (!user) {
+        return res.redirect('/login');
+      }
+  
+      res.render('profilemanager', { user });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+
+app.post('/update-profile', async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.redirect('/login');
+      }
+  
+      const { fullname, address1, address2, city, state, zipcode } = req.body;
+      const user = await User.findById(req.session.userId);
+  
+      if (!user) {
+        return res.redirect('/login');
+      }
+  
+      user.name = fullname;
+      user.address1 = address1;
+      user.address2 = address2;
+      user.city = city;
+      user.state = state;
+      user.zipcode = zipcode;
+  
+      await user.save();
+  
+      res.redirect('/index');
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+
+  app.get('/index', async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.redirect('/login');
+      }
+  
+      const user = await User.findById(req.session.userId);
+  
+      if (!user) {
+        return res.redirect('/login');
+      }
+  
+      res.render('index', { messages: {}, user: { fullname: user.name, email: user.email, password: user.password, address1: user.address1, address2: user.address2, city: user.city, state: user.state, zipcode: user.zipcode } });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+
+  app.get('/FuelQuoteForm', (req, res) => {
+    res.render('fuelquoteform');
+  });
+
+  app.get('/FuelPurchaseHistory', async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.redirect('/login');
+      }
+  
+      const user = await User.findById(req.session.userId);
+  
+      if (!user) {
+        return res.redirect('/login');
+      }
+  
+      res.render('fuelPurchasehistory', { user, purchaseHistory: user.purchaseHistory });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
+
+  app.post('/submit-fuel-quote', async (req, res) => {
+    try {
+      const { gallons, deliveryAddress, date, price, total } = req.body;
+  
+
+  
+      const fuelQuote = {
+        gallons: String,
+        deliveryAddress: String,
+        deliveryDate: new Date(date),
+        pricePerGallon: String,
+        totalAmount: String
+      };
+  
+      await User.updateOne(
+        { _id: req.session.userId },
+        { $push: { purchaseHistory: fuelQuote } }
+      );
+  
+      res.redirect('/FuelPurchaseHistory');
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
 app.listen(3000, () => {
   console.log('Server started on port 3000');
 });
