@@ -159,8 +159,8 @@ app.post('/submit-fuel-quote', checkAuthenticated, (req, res) => {
 
   const submission = {
     date: new Date(),
-    delivery_address: req.body.delivery_address,
-    total: req.body.total,
+    delivery_address: req.user.delivery_address,
+    total: req.user.total,
     gallons: req.body.gallons,
     price: req.body.price,
   };

@@ -26,14 +26,14 @@
 
   <h2>Past Purchase History</h2>
   <div id="purchase_history">
-    <% if (purchaseHistory && purchaseHistory.length > 0) { %>
+    <% if (user.purchaseHistory && user.purchaseHistory.length > 0) { %>
       <ol>
-        <% purchaseHistory.forEach(purchase => { %>
+        <% user.purchaseHistory.forEach(purchase => { %>
           <li>
-            Delivery Date: <%= new Date(purchase.date).toLocaleDateString() %> 
+            Delivery Date: <%= new Date(purchase.deliveryDate).toLocaleDateString() %> 
             User: <%= user.name %> 
             Purchased: <%= purchase.gallons %> Gallons
-            Price: <%= purchase.price %> 
+            Price: <%= purchase.pricePerGallon %> 
           </li>
         <% }); %>
       </ol>
