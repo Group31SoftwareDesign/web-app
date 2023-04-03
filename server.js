@@ -1,227 +1,127 @@
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
-
-const express = require('express')
-const app = express()
-const bcrypt = require('bcrypt')
-const passport = require('passport')
-const flash = require('express-flash')
-const session = require('express-session')
-const methodOverride = require('method-override')
-const mongoose = require('mongoose')
-const initializePassport = require('./passport-config')
-const User = require("./User")
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const path = require('path');
+const User = require('./User');
+const app = express();
+const session = require('express-session');
 mongoose.connect("mongodb+srv://amcruz8:alex1009@atlascluster.yhr0sni.mongodb.net/?retryWrites=true&w=majority")
   .then(() => console.log("connected"))
   .catch((e) => console.error(e));
-initializePassport(
-  passport,
-  email => users.find(user => user.email === email),
-  id => users.find(user => user.id === id)
-)
-
-// const user1 = new User({
-//   email: "a@a",
-//   name:"Kyle"
-// })
-// user1.save().then(()=> console.log("User saved"))
-// console.log(user1)
-const users = []
-
-
-// video start
-run()
-async function run(){
-  try{
-    // const user1 = await User.findById("6429136c4e7e819c1726a050")
-    const user1 = await User.find({name: "Kyle"})
-    // const user1 = await User.create({
-    //   email: "a@a",
-    //   name:"Kyle",
-    //   password: "a",
-    //   hobbies: ["Weight lifting", "Bowling"],
-    //   address:{
-    //     street: "Main St."
-    //   },
-    //   age: 5
-    // })
-    // user1.name = "Sally"
-    // await user1.save()
-    console.log(user1)
-  }catch(e){
-    console.log(e.message)
-  }
-}
-
-
-
-
-
-
-
-
-module.exports = app;
-app.set('view-engine', 'ejs')
-app.use(express.urlencoded({ extended: false }))
-app.use(flash())
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: 'your-session-secret',
   resave: false,
-  saveUninitialized: false
-}))
-app.use(passport.initialize())
-app.use(passport.session())
-app.use(methodOverride('_method'))
-app.use(express.static(__dirname + '/public'));
+  saveUninitialized: false,
+  cookie: { maxAge: 60 * 60 * 1000 } // 1 hour
+}));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
-app.get('/', checkAuthenticated, (req, res) => {
-    // get the user's email address from the session
-    const email = req.user.email
-
-    // find the user with the matching email address
-    const user = users.find(user => user.email === email)
-    const purchaseHistory = user.purchaseHistory
-  res.render('index.ejs', {user, purchaseHistory})
+app.get('/login', (req, res) => {
+  res.render('login', { messages: {} });
 });
+
+// app.post('/login', async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       return res.render('login', { messages: { error: 'Invalid credentials' } });
+//     }
+//     const validPassword = await bcrypt.compare(password, user.password);
+//     if (!validPassword) {
+//       return res.render('login', { messages: { error: 'Invalid credentials' } });
+//     }
+//     const token = jwt.sign({ id: user._id }, 'secret', { expiresIn: '1h' });
+//     res.render('index', { messages: {}, user: { fullname: user.name, email: user.email, password: user.password } });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: 'Internal server error' });
+//   }
+// });
+
+app.post('/login', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.render('login', { messages: { error: 'Invalid credentials' } });
+      }
+      const validPassword = await bcrypt.compare(password, user.password);
+      if (!validPassword) {
+        return res.render('login', { messages: { error: 'Invalid credentials' } });
+      }
+      req.session.userId = user._id;
+      res.render('index', { messages: {}, user: { fullname: user.name, email: user.email, password: user.password } });
+      
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
 
 app.get('/public/css/styles.css', (req, res) => {
-  res.sendFile(__dirname + '/public/css/styles.css');
-});
-
-app.get('/login', checkNotAuthenticated, (req, res) => {
-  res.render('login.ejs')
-})
-
-app.get('/register', checkNotAuthenticated, (req, res) => {
-  res.render('register.ejs')
-})
-
-app.get('/FuelQuoteForm', checkAuthenticated, (req, res) => {
-  res.render('FuelQuoteForm.ejs')
-})
-
-app.get('/ProfileManager', checkAuthenticated, (req, res) => {
-  res.render('ProfileManager.ejs')
-})
-
-app.get('/FuelPurchaseHistory', checkAuthenticated, (req, res) => {
-  const email = req.user.email;
-  const user = users.find(user => user.email === email);
-  const purchaseHistory = user.purchaseHistory;
-  res.render('FuelPurchaseHistory.ejs', { user, purchaseHistory });
-});
-
-
-app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-  successRedirect: '/',
-  failureRedirect: '/login',
-  failureFlash: true
-}))
-
-app.post('/register', checkNotAuthenticated, async (req, res) => {
-  try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10)
-    users.push({
-      id: Date.now().toString(),
-      name: req.body.name,
-      email: req.body.email,
-      password: hashedPassword,
-      fullname: req.body.fullname,
-      address1: req.body.address1,
-      address2: req.body.address2,
-      city: req.body.city,
-      state: req.body.state,
-      zipcode: req.body.zipcode,
-      purchaseHistory: [
-        {
-          date: '',
-          delivery_address: '',
-          gallons: '',
-          price: '',
-          total: ''
-        }
-      ]
-    })
-    res.status(302).redirect('/login')
-  } catch {
-    res.redirect('/register')
-  }
-})
-
-app.post('/submit-fuel-quote', checkAuthenticated, (req, res) => {
-  const email = req.user.email;
-
-  const submission = {
-    date: new Date(),
-    delivery_address: req.body.delivery_address,
-    total: req.body.total,
-    gallons: req.body.gallons,
-    price: req.body.price,
-  };
-
-  updateUserPurchaseHistory(email, submission);
-
-  res.redirect('/FuelPurchaseHistory');
-});
-
-app.post('/update-profile', checkAuthenticated, (req, res) => {
-  const email = req.user.email
-
-  const updates = {
-    fullname: req.body.fullname,
-    address1: req.body.address1,
-    address2: req.body.address2,
-    city: req.body.city,
-    state: req.body.state,
-    zipcode: req.body.zipcode
-  }
-
-  updateUser(email, updates)
-
-  res.redirect('/')
-})
-
-app.delete('/logout', (req, res) => {
-  console.log('logout route called');
-  req.logout(() => {
-    res.redirect('/login');
+    res.sendFile(__dirname + '/public/css/styles.css');
   });
+
+app.get('/register', (req, res) => {
+  res.render('register');
 });
 
+// app.get('/logout', (req, res) => {
+//     req.session.destroy(err => {
+//       if (err) {
+//         console.error(err);
+//         res.status(500).json({ message: 'Internal server error' });
+//       } else {
+//         res.redirect('/login');
+//       }
+//     });
+//   });
+  
+app.get('/logout', (req, res) => {
+    if (req.session) {
+      req.session.destroy(err => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ message: 'Internal server error' });
+        } else {
+          res.redirect('/login');
+        }
+      });
+    } else {
+      res.redirect('/login');
+    }
+  });
+  
+app.post('/register', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (user) {
+      return res.render('register', { messages: { error: 'User already exists' } });
+    }
 
-function updateUser(email, updates) {
-  const user = users.find(user => user.email === email)
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    const newUser = new User({
+        name,
+        email,
+        password: hashedPassword
+      });
 
-  if (user) {
-    Object.assign(user, updates)
-    
+    await newUser.save();
+    res.redirect('/login');
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
   }
-}
+});
 
-function updateUserPurchaseHistory(email, submission) {
-  const user = users.find(user => user.email === email);
-
-  if (user) {
-    user.purchaseHistory.push(submission);
-  }
-}
-
-function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next()
-  }
-
-  res.redirect('/login')
-}
-
-function checkNotAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return res.redirect('/')
-  }
-  next()
-}
-
-if (!module.parent) {
-  app.listen(3000);
-}
+app.listen(3000, () => {
+  console.log('Server started on port 3000');
+});
