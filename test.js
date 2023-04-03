@@ -13,7 +13,7 @@ describe('Testing server routes', function() {
         password: 'testpassword',
       })
       .end(function(err, response) {
-        assert.equal(response.status, 200);
+        assert.equal(response.status, 302);
         done();
       });
   });
@@ -67,10 +67,10 @@ describe('Testing server routes', function() {
         email: 'test.user@example.com',
         password: 'testpassword',
       })
-      .expect(200, done);
+      .expect(302, done);
   });
 
-  it('should return status 302 for POST /login with invalid credentials', function(done) {
+  it('should return status 200 for POST /login with invalid credentials', function(done) {
     request(app)
       .post('/login')
       .send({
@@ -80,7 +80,7 @@ describe('Testing server routes', function() {
       .expect(200, done);
   });
 
-  it('should return status 302 for POST /register with existing email', function(done) {
+  it('should return status 200 for POST /register with existing email', function(done) {
     request(app)
       .post('/register')
       .send({
@@ -101,8 +101,75 @@ describe('Testing server routes', function() {
       })
       .expect(200, done);
   });
+  it('should return status 200 for GET /ProfileManager after navigating to /FuelPurchaseHistory', function(done) {
+    authenticatedUser
+      .get('/FuelPurchaseHistory')
+      .then(() => {
+        authenticatedUser
+          .get('/ProfileManager')
+          .expect(200, done);
+      });
+  });
+  
+  it('should return status 302 for POST /FuelQuoteForm with valid data', function(done) {
+    authenticatedUser
+      .post('/submit-fuel-quote')
+      .send({
+        gallonsRequested: 1000,
+        deliveryDate: '2023-05-10',
+        deliveryAddress: '123 Updated Street, Apt 4B, Updated City, UT 12345',
+        suggestedPrice: 2.50,
+      })
+      .expect(302, done);
+  });
+  
+  it('should return status 200 for GET /FuelQuoteForm after navigating to /ProfileManager', function(done) {
+    authenticatedUser
+      .get('/ProfileManager')
+      .then(() => {
+        authenticatedUser
+          .get('/FuelQuoteForm')
+          .expect(200, done);
+      });
+  });
 
-
-
+  it('should return status 200 for POST /ProfileManager with valid data', function(done) {
+    authenticatedUser
+      .post('/update-profile')
+      .send({
+        name: 'Updated User',
+        fullname: "Updated User",
+        address1: '123 Updated Street',
+        address2: 'Apt 4B',
+        city: 'Updated City',
+        state: 'AL',
+        zipCode: '12345'
+      })
+      .expect(302, done);
+  });
+  it('should return status 200 for GET /logout when logged in', function(done) {
+    authenticatedUser
+      .get('/logout')
+      .expect(302, done);
+  });
+  
+  it('should redirect to /login after GET /logout', function(done) {
+    authenticatedUser
+      .get('/logout')
+      .expect('Location', '/login')
+      .expect(302, done);
+  });
+  
+  it('should not have access to protected routes after GET /logout', function(done) {
+    authenticatedUser
+      .get('/logout')
+      .end(() => {
+        authenticatedUser
+          .get('/ProfileManager')
+          .expect(302, done);
+      });
+  });
+  
+  
 });
 

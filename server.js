@@ -29,14 +29,12 @@ function checkLoggedIn(req, res, next) {
   next();
 }
 
-// Middleware to check if the user is not logged in
 function checkNotLoggedIn(req, res, next) {
   if (!req.session.userId) {
     return res.redirect('/login');
   }
   next();
 }
-
 
 app.get('/login',checkLoggedIn, (req, res) => {
   res.render('login', { messages: {} });
@@ -107,25 +105,6 @@ app.get('/FuelQuoteForm',checkNotLoggedIn,(req, res) => {
   res.render('fuelquoteform');
 });
 
-// app.get('/FuelPurchaseHistory',checkNotLoggedIn, async (req, res) => {
-//   try {
-//     if (!req.session.userId) {
-//       return res.redirect('/login');
-//     }
-
-//     const user = await User.findById(req.session.userId);
-
-//     if (!user) {
-//       return res.redirect('/login');
-//     }
-
-//     res.render('fuelPurchasehistory', { user, purchaseHistory: user.purchaseHistory });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: 'Internal server error' });
-//   }
-// });
-
 app.get('/FuelPurchaseHistory', checkNotLoggedIn, async (req, res) => {
   try {
     if (!req.session.userId) {
@@ -183,8 +162,8 @@ app.post('/login', async (req, res) => {
         return res.render('login', { messages: { error: 'Invalid credentials' } });
       }
       req.session.userId = user._id;
-      res.render('index', { messages: {}, user: { fullname: user.name, email: user.email, password: user.password } });
-      
+      // res.render('index', { messages: {}, user: { fullname: user.name, email: user.email, password: user.password } });
+      res.redirect('/login');
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: 'Internal server error' });
@@ -198,7 +177,6 @@ app.post('/register', async (req, res) => {
     if (user) {
       return res.render('register', { messages: { error: 'User already exists' } });
     }
-
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const newUser = new User({
@@ -244,32 +222,6 @@ app.post('/update-profile', async (req, res) => {
     }
   });
 
-  app.post('/submit-fuel-quote', async (req, res) => {
-    try {
-      const { gallons, deliveryAddress, date, price, total } = req.body;
-  
-
-  
-      const fuelQuote = {
-        gallons: String,
-        deliveryAddress: String,
-        deliveryDate: new Date(date),
-        pricePerGallon: String,
-        totalAmount: String
-      };
-  
-      await User.updateOne(
-        { _id: req.session.userId },
-        { $push: { purchaseHistory: fuelQuote } }
-      );
-  
-      res.redirect('/FuelPurchaseHistory');
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  });
-  
   const server = app.listen(3000, () => {
   console.log('Server started on port 3000');
 });
