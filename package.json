@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "test": "mocha test.js"
+    "test": "nyc mocha"
   },
   "author": "",
   "license": "ISC",
@@ -24,9 +24,15 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.21.4",
+    "@babel/preset-env": "^7.21.4",
+    "babel-jest": "^29.5.0",
     "chai": "^4.3.7",
     "chai-http": "^4.3.0",
+    "jest": "^29.5.0",
     "mocha": "^10.2.0",
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "nyc": "^15.1.0",
+    "supertest": "^6.3.3"
   }
 }

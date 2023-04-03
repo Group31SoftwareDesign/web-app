@@ -22,9 +22,25 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// function checkLoggedIn(req, res, next) {
+//   if (req.session.userId) {
+//     return res.redirect('/index');
+//   }
+//   next();
+// }
+
+// // Middleware to check if the user is not logged in
+// function checkNotLoggedIn(req, res, next) {
+//   if (!req.session.userId) {
+//     return res.redirect('/login');
+//   }
+//   next();
+// }
+
 app.get('/login', (req, res) => {
   res.render('login', { messages: {} });
 });
+
 
 
 app.post('/login', async (req, res) => {
@@ -51,7 +67,7 @@ app.get('/public/css/styles.css', (req, res) => {
     res.sendFile(__dirname + '/public/css/styles.css');
   });
 
-app.get('/register', (req, res) => {
+app.get('/register',(req, res) => {
   res.render('register');
 });
 
@@ -142,7 +158,7 @@ app.post('/update-profile', async (req, res) => {
     }
   });
 
-  app.get('/index', async (req, res) => {
+  app.get('/index',  async (req, res) => {
     try {
       if (!req.session.userId) {
         return res.redirect('/login');
@@ -161,7 +177,7 @@ app.post('/update-profile', async (req, res) => {
     }
   });
 
-  app.get('/FuelQuoteForm', (req, res) => {
+  app.get('/FuelQuoteForm',(req, res) => {
     res.render('fuelquoteform');
   });
 
@@ -211,6 +227,8 @@ app.post('/update-profile', async (req, res) => {
     }
   });
   
-app.listen(3000, () => {
+  const server = app.listen(3000, () => {
   console.log('Server started on port 3000');
 });
+
+module.exports = app;
