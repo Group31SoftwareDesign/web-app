@@ -1,6 +1,7 @@
 const assert = require('chai').assert;
 const request = require('supertest');
 const app = require('./server.js');
+const User = require('./User');
 
 describe('Testing server routes', function() {
   let authenticatedUser = request.agent(app);
@@ -91,7 +92,7 @@ describe('Testing server routes', function() {
       .expect(200, done);
   });
 
-  it('should return status 200 for POST /register with new email', function(done) {
+  it('should return status 302 for POST /register with new email', function(done) {
     request(app)
       .post('/register')
       .send({
@@ -99,8 +100,23 @@ describe('Testing server routes', function() {
         email: 'new.user@example.com',
         password: 'newpassword',
       })
-      .expect(200, done);
+      .expect(302)
+      .end(async function(err, res) {
+        if (err) {
+          return done(err);
+        }
+  
+        // Delete the created user from the database
+        try {
+          await User.deleteOne({ email: 'new.user@example.com' });
+        } catch (error) {
+          console.error('Error deleting user:', error);
+        }
+  
+        done();
+      });
   });
+  
   it('should return status 200 for GET /ProfileManager after navigating to /FuelPurchaseHistory', function(done) {
     authenticatedUser
       .get('/FuelPurchaseHistory')
