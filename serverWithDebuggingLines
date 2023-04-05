@@ -9,7 +9,8 @@ const app = express();
 const session = require('express-session');
 
 mongoose.connect("mongodb+srv://amcruz8:alex1009@atlascluster.yhr0sni.mongodb.net/?retryWrites=true&w=majority")
-
+  .then(() => console.log("connected"))
+  .catch((e) => console.error(e));
 app.use(session({
   secret: 'your-session-secret',
   resave: false,
@@ -48,22 +49,56 @@ res.render('register');
 });
 
 app.get('/logout', checkNotLoggedIn,(req, res) => {
-
+  if (req.session) {
     req.session.destroy(err => {
-      res.redirect('/login');
+      if (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error' });
+      } else {
+        res.redirect('/login');
+      }
     });
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.get('/ProfileManager',checkNotLoggedIn, async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.redirect('/login');
+    }
+
     const user = await User.findById(req.session.userId);
 
+    if (!user) {
+      return res.redirect('/login');
+    }
+
     res.render('profilemanager', { user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 app.get('/index',checkNotLoggedIn,  async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.redirect('/login');
+    }
 
     const user = await User.findById(req.session.userId);
+
+    if (!user) {
+      return res.redirect('/login');
+    }
+
     res.render('index', { messages: {}, user: { fullname: user.name, email: user.email, password: user.password, address1: user.address1, address2: user.address2, city: user.city, state: user.state, zipcode: user.zipcode } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 app.get('/FuelQuoteForm',checkNotLoggedIn,(req, res) => {
@@ -71,13 +106,27 @@ app.get('/FuelQuoteForm',checkNotLoggedIn,(req, res) => {
 });
 
 app.get('/FuelPurchaseHistory', checkNotLoggedIn, async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.redirect('/login');
+    }
+
     const user = await User.findById(req.session.userId);
 
+    if (!user) {
+      return res.redirect('/login');
+    }
+    
     // Pass the user object to the 'fuelPurchasehistory' view
     res.render('fuelPurchasehistory', { user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 app.post('/submit-fuel-quote', async (req, res) => {
+  try {
     const { gallons, deliveryAddress, date, price, total } = req.body;
     const user = await User.findById(req.session.userId);
 
@@ -95,9 +144,14 @@ app.post('/submit-fuel-quote', async (req, res) => {
 
     await user.save();
     res.redirect('/FuelPurchaseHistory');
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 app.post('/login', async (req, res) => {
+    try {
       const { email, password } = req.body;
       const user = await User.findOne({ email });
       if (!user) {
@@ -110,9 +164,14 @@ app.post('/login', async (req, res) => {
       req.session.userId = user._id;
       // res.render('index', { messages: {}, user: { fullname: user.name, email: user.email, password: user.password } });
       res.redirect('/login');
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+    }
   });
   
 app.post('/register', async (req, res) => {
+  try {
     const { name, email, password } = req.body;
     const user = await User.findOne({ email });
     if (user) {
@@ -128,25 +187,42 @@ app.post('/register', async (req, res) => {
 
     await newUser.save();
     res.redirect('/login');
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 app.post('/update-profile', async (req, res) => {
-    const { fullname, address1, address2, city, state, zipcode } = req.body;
-    const user = await User.findById(req.session.userId);
-
-    user.name = fullname;
-    user.address1 = address1;
-    user.address2 = address2;
-    user.city = city;
-    user.state = state;
-    user.zipcode = zipcode;
-
-    await user.save();
-
-    res.redirect('/index');
+    try {
+      if (!req.session.userId) {
+        return res.redirect('/login');
+      }
+  
+      const { fullname, address1, address2, city, state, zipcode } = req.body;
+      const user = await User.findById(req.session.userId);
+  
+      if (!user) {
+        return res.redirect('/login');
+      }
+  
+      user.name = fullname;
+      user.address1 = address1;
+      user.address2 = address2;
+      user.city = city;
+      user.state = state;
+      user.zipcode = zipcode;
+  
+      await user.save();
+  
+      res.redirect('/index');
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+    }
   });
 
-const server = app.listen(3000, () => {
+  const server = app.listen(3000, () => {
   console.log('Server started on port 3000');
 });
 

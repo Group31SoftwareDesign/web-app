@@ -80,6 +80,15 @@ describe('Testing server routes', function() {
       })
       .expect(200, done);
   });
+  it('should return status 200 for POST /login with invalid credentials', function(done) {
+    request(app)
+      .post('/login')
+      .send({
+        email: 'test@example.com',
+        password: 'wrongpassword',
+      })
+      .expect(200, done);
+  });
 
   it('should return status 200 for POST /register with existing email', function(done) {
     request(app)
@@ -116,7 +125,16 @@ describe('Testing server routes', function() {
         done();
       });
   });
-  
+  it('should redirect the user to the index page if they are already logged in', function() {
+    const req = { session: { userId: '123' } };
+    const res = { redirect: function(url) { this.url = url; } };
+    const next = function() {};
+
+    app.checkLoggedIn(req, res, next);
+
+    assert.strictEqual(res.url, '/index');
+  });
+
   it('should return status 200 for GET /ProfileManager after navigating to /FuelPurchaseHistory', function(done) {
     authenticatedUser
       .get('/FuelPurchaseHistory')
@@ -185,7 +203,6 @@ describe('Testing server routes', function() {
           .expect(302, done);
       });
   });
-  
   
 });
 
