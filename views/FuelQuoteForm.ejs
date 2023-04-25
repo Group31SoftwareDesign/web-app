@@ -7,10 +7,7 @@
 </head>
 <body>
 	<header>
-		<!-- Navbar content -->
 	  <ul class="navbar">
-		<!-- <li><a class="nav-item nav-link" href="#Home">Home</a> </li> -->
-	   <!-- <li><a href="#Home"> <img id="logo" src="PUMP_PRICE_PRO.png"></a></li> -->
 	   <li><a href="/logout">Logout</a></li>
 		<li><a href="/FuelQuoteForm">Fuel Quote Form</a> </li>
 		<li><a href="/FuelPurchaseHistory">Fuel Purchase History</a></li>
@@ -30,23 +27,110 @@
 
 		<label for="delivery-date">Delivery Date:</label>
 		<input type="date" id="date" name="date" required class="fuel-quote-form"><br>
-
+<!-- 
 		<label for="suggested-price">Suggested Price / gallon:</label>
 		<input type="number" id="price" name="price" required class="fuel-quote-form"><br>
 
 		<label for="total-amount-due">Total Amount Due:</label>
 		<input type="number" id="total" name="total" readonly class="fuel-quote-form"><br>
+		
+		<input type="submit" class="fuel-quote-form"></input> -->
+		<label for="suggested-price">Suggested Price / gallon:</label>
+		<input type="number" id="price" name="price" readonly class="fuel-quote-form"><br>
 
-		<input type="submit" class="fuel-quote-form"></input>
+		<label for="total-amount-due">Total Amount Due:</label>
+		<input type="number" id="total" name="total" readonly class="fuel-quote-form"><br>
+
+		<button id="get-quote" type="button" disabled>Get Quote</button>
+		<input type="submit" class="fuel-quote-form" disabled></input>
 	</form>
 
+	<script>
+		const gallonsInput = document.getElementById('gallons');
+		const deliveryAddressInput = document.getElementById('delivery-address');
+		const dateInput = document.getElementById('date');
+		const priceInput = document.getElementById('price');
+		const totalInput = document.getElementById('total');
+		const getQuoteButton = document.getElementById('get-quote');
+		const submitButton = document.querySelector('input[type="submit"]');
+	  
+		function checkFormValues() {
+		  if (gallonsInput.value && deliveryAddressInput.value && dateInput.value) {
+			getQuoteButton.disabled = false;
+		  } else {
+			getQuoteButton.disabled = true;
+		  }
+		}
+	  
+		gallonsInput.addEventListener('input', checkFormValues);
+		deliveryAddressInput.addEventListener('input', checkFormValues);
+		dateInput.addEventListener('input', checkFormValues);
+	  
+		getQuoteButton.addEventListener('click', async () => {
+		  const response = await fetch('/get-quote', {
+			method: 'POST',
+			headers: {
+			  'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+			  gallons: gallonsInput.value,
+			  deliveryAddress: deliveryAddressInput.value,
+			  date: dateInput.value
+			})
+		  });
+	  
+		  if (response.ok) {
+			const data = await response.json();
+			priceInput.value = data.price.toFixed(3);
+			totalInput.value = data.total.toFixed(2);
+			submitButton.disabled = false;
+		  }
+		});
+	  </script>
+	  
+
 </body>
-
-
-
 
 
 </html>
 
 	
 
+<!-- 
+<button id="get-quote-btn" type="button" disabled>Get Quote</button>
+		<input type="submit" id="submit-btn" class="fuel-quote-form" disabled></input>
+	</form>
+
+	<script>
+		// Disable the submit button and Get Quote button if all fields are empty
+		$('form input').on('input', function() {
+			var empty = false;
+			$('form input').each(function() {
+				if ($(this).val() === '') {
+					empty = true;
+				}
+			});
+			if (empty) {
+				$('#submit-btn').prop('disabled', true);
+				$('#get-quote-btn').prop('disabled', true);
+			} else {
+				$('#submit-btn').prop('disabled', false);
+				$('#get-quote-btn').prop('disabled', false);
+			}
+		});
+
+		// Make a call to the Pricing Module when the Get Quote button is clicked
+		$('#get-quote-btn').click(function() {
+			var gallons = $('#gallons').val();
+			var deliveryAddress = $('#delivery-address').val();
+			var date = $('#date').val();
+			$.get('/get-price', {
+				gallons: gallons,
+				deliveryAddress: deliveryAddress,
+				date: date
+			}, function(data) {
+				$('#price').val(data.suggestedPrice);
+				$('#total').val(data.totalAmountDue);
+			});
+		});
+	</script> -->

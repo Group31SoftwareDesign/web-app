@@ -77,25 +77,105 @@ app.get('/FuelPurchaseHistory', checkNotLoggedIn, async (req, res) => {
     res.render('fuelPurchasehistory', { user });
 });
 
+async function calculatePricePerGallon(user, gallons) {
+  const currentPricePerGallon = 1.5;
+  const locationFactor = user.state === 'Texas' ? 0.02 : 0.04;
+  const rateHistoryFactor = user.purchaseHistory.length > 0 ? 0.01 : 0;
+  const gallonsRequestedFactor = gallons > 1000 ? 0.02 : 0.03;
+  const companyProfitFactor = 0.1;
+  const margin = currentPricePerGallon * (locationFactor - rateHistoryFactor + gallonsRequestedFactor + companyProfitFactor);
+  return currentPricePerGallon + margin;
+}
 app.post('/submit-fuel-quote', async (req, res) => {
-    const { gallons, deliveryAddress, date, price, total } = req.body;
-    const user = await User.findById(req.session.userId);
+  const { gallons, deliveryAddress, date } = req.body;
+  const user = await User.findById(req.session.userId);
 
-    // Create a fuelQuote object
-    const fuelQuote = {
-      gallons: gallons,
-      deliveryAddress: deliveryAddress,
-      deliveryDate: date,
-      pricePerGallon: price,
-      totalAmount: total
-    };
+  // Calculate the price per gallon using the calculatePricePerGallon function
+  const suggestedPricePerGallon = await calculatePricePerGallon(user, gallons);
 
-    // Push the fuelQuote object into the purchaseHistory array
-    user.purchaseHistory.push(fuelQuote);
+  // Calculate the total amount due
+  const totalAmountDue = gallons * suggestedPricePerGallon;
 
-    await user.save();
-    res.redirect('/FuelPurchaseHistory');
+  // Create a fuelQuote object
+  const fuelQuote = {
+    gallons: gallons,
+    deliveryAddress: deliveryAddress,
+    deliveryDate: date,
+    pricePerGallon: suggestedPricePerGallon.toFixed(3),
+    totalAmount: totalAmountDue.toFixed(2)
+  };
+
+  // Push the fuelQuote object into the purchaseHistory array
+  user.purchaseHistory.push(fuelQuote);
+
+  await user.save();
+  res.redirect('/FuelPurchaseHistory');
 });
+
+app.post('/get-quote', async (req, res) => {
+  const { gallons, deliveryAddress, date } = req.body;
+  const user = await User.findById(req.session.userId);
+
+  const suggestedPricePerGallon = await calculatePricePerGallon(user, gallons);
+  const totalAmountDue = gallons * suggestedPricePerGallon;
+
+  res.json({
+    price: suggestedPricePerGallon,
+    total: totalAmountDue
+  });
+});
+
+
+// app.post('/submit-fuel-quote', async (req, res) => {
+//     const { gallons, deliveryAddress, date, price, total } = req.body;
+//     const user = await User.findById(req.session.userId);
+
+//     // Create a fuelQuote object
+//     const fuelQuote = {
+//       gallons: gallons,
+//       deliveryAddress: deliveryAddress,
+//       deliveryDate: date,
+//       pricePerGallon: price,
+//       totalAmount: total
+//     };
+
+//     // Push the fuelQuote object into the purchaseHistory array
+//     user.purchaseHistory.push(fuelQuote);
+
+//     await user.save();
+//     res.redirect('/FuelPurchaseHistory');
+// });
+// app.post('/submit-fuel-quote', async (req, res) => {
+//   const { gallons, deliveryAddress, date } = req.body;
+//   const user = await User.findById(req.session.userId);
+
+//   // Calculate the price per gallon using the pricing module
+//   const currentPricePerGallon = 1.5; // Constant for simplicity
+//   const locationFactor = user.state === 'Texas' ? 0.02 : 0.04;
+//   const rateHistoryFactor = user.purchaseHistory.length > 0 ? 0.01 : 0;
+//   const gallonsRequestedFactor = gallons > 1000 ? 0.02 : 0.03;
+//   const companyProfitFactor = 0.1;
+//   const margin = currentPricePerGallon * (locationFactor - rateHistoryFactor + gallonsRequestedFactor + companyProfitFactor);
+//   const suggestedPricePerGallon = currentPricePerGallon + margin;
+
+//   // Calculate the total amount due
+//   const totalAmountDue = gallons * suggestedPricePerGallon;
+
+//   // Create a fuelQuote object
+//   const fuelQuote = {
+//     gallons: gallons,
+//     deliveryAddress: deliveryAddress,
+//     deliveryDate: date,
+//     pricePerGallon: suggestedPricePerGallon.toFixed(3),
+//     totalAmount: totalAmountDue.toFixed(2)
+//   };
+
+//   // Push the fuelQuote object into the purchaseHistory array
+//   user.purchaseHistory.push(fuelQuote);
+
+//   await user.save();
+//   res.redirect('/FuelPurchaseHistory');
+// });
 
 app.post('/login', async (req, res) => {
       const { email, password } = req.body;

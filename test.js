@@ -115,7 +115,6 @@ describe('Testing server routes', function() {
           return done(err);
         }
   
-        // Delete the created user from the database
         try {
           await User.deleteOne({ email: 'new.user@example.com' });
         } catch (error) {
@@ -145,16 +144,30 @@ describe('Testing server routes', function() {
       });
   });
   
-  it('should return status 302 for POST /FuelQuoteForm with valid data', function(done) {
+  it('should return status 302 for POST /submit-fuel-quote with valid data', function(done) {
     authenticatedUser
-      .post('/submit-fuel-quote')
+      .post('/get-quote')
       .send({
-        gallonsRequested: 1000,
-        deliveryDate: '2023-05-10',
-        deliveryAddress: '123 Updated Street, Apt 4B, Updated City, UT 12345',
-        suggestedPrice: 2.50,
+        gallons: 1000,
+        date: '2023-05-10',
+        deliveryAddress: '123 Updated Street, Apt 4B, Updated City, UT 12345'
       })
-      .expect(302, done);
+      .end((err, res) => {
+        assert.equal(res.status, 200);
+        authenticatedUser
+          .post('/submit-fuel-quote')
+          .send({
+            gallons: 1000,
+            date: '2023-05-10',
+            deliveryAddress: '123 Updated Street, Apt 4B, Updated City, UT 12345',
+            price: res.body.price,
+            total: res.body.total
+          })
+          .end((err, res) => {
+            assert.equal(res.status, 302);
+            done();
+          });
+      });
   });
   
   it('should return status 200 for GET /FuelQuoteForm after navigating to /ProfileManager', function(done) {
@@ -167,17 +180,17 @@ describe('Testing server routes', function() {
       });
   });
 
+
   it('should return status 200 for POST /ProfileManager with valid data', function(done) {
     authenticatedUser
       .post('/update-profile')
       .send({
-        name: 'Updated User',
         fullname: "Updated User",
         address1: '123 Updated Street',
         address2: 'Apt 4B',
         city: 'Updated City',
         state: 'AL',
-        zipCode: '12345'
+        zipcode: '12345'
       })
       .expect(302, done);
   });
@@ -205,4 +218,3 @@ describe('Testing server routes', function() {
   });
   
 });
-

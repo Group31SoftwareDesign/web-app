@@ -25,21 +25,24 @@
   </form>
 
   <h2>Past Purchase History</h2>
-  <div id="purchase_history">
-    <% if (user.purchaseHistory && user.purchaseHistory.length > 0) { %>
-      <ol>
-        <% user.purchaseHistory.forEach(purchase => { %>
-          <li>
-            Delivery Date: <%= new Date(purchase.deliveryDate).toLocaleDateString() %> 
-            User: <%= user.name %> 
-            Purchased: <%= purchase.gallons %> Gallons
-            Price: <%= purchase.pricePerGallon %> 
-          </li>
-        <% }); %>
-      </ol>
-    <% } else { %>
-      <p>No purchase history found.</p>
-    <% } %>
-  </div>
+<div id="purchase_history">
+  <% if (user.purchaseHistory && user.purchaseHistory.length > 0) { %>
+    <ol>
+      <% user.purchaseHistory.forEach(purchase => { %>
+        <div class="purchase-item">
+          <p>Delivery Date: <%= new Date(purchase.deliveryDate).toLocaleDateString() %></p>
+          <p>Delivery Address: <%= purchase.deliveryAddress %></p>
+          <p>User: <%= user.name %></p>
+          <p>Number of Gallons Purchased: <%= purchase.gallons %> Gallons</p>
+          <p>Price per Gallon: <%= purchase.pricePerGallon %></p>
+          <p>Total Cost: <%= (purchase.gallons * purchase.pricePerGallon).toFixed(2) %></p>
+          
+        </div>
+      <% }); %>
+    </ol>
+  <% } else { %>
+    <p>No purchase history found.</p>
+  <% } %>
+</div>
 </body>
 </html>

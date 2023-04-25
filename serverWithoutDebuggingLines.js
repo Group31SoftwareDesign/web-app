@@ -50,12 +50,6 @@ res.render('register');
 app.get('/logout', checkNotLoggedIn,(req, res) => {
 
     req.session.destroy(err => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Internal server error' });
-      } else {
-        
-      }
       res.redirect('/login');
     });
 });
@@ -69,7 +63,6 @@ app.get('/ProfileManager',checkNotLoggedIn, async (req, res) => {
 app.get('/index',checkNotLoggedIn,  async (req, res) => {
 
     const user = await User.findById(req.session.userId);
-
     res.render('index', { messages: {}, user: { fullname: user.name, email: user.email, password: user.password, address1: user.address1, address2: user.address2, city: user.city, state: user.state, zipcode: user.zipcode } });
 });
 
@@ -158,3 +151,4 @@ const server = app.listen(3000, () => {
 });
 
 module.exports = app;
+module.exports.checkLoggedIn = checkLoggedIn;

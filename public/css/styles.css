@@ -214,3 +214,33 @@ input[type="submit"]:hover {
 	border-radius: 15px;
 	cursor: pointer;
 }
+
+.purchase-item {
+	margin-bottom: 20px;
+	border-bottom: 1px solid #ccc;
+	padding-bottom: 10px;
+}
+.purchase-item p {
+	margin: 5px 0;
+}
+
+.profile-info {
+	font-family: Arial, sans-serif;
+	margin: 2rem auto;
+	padding: 2rem;
+	width: 80%;
+	background-color: #f4f4f4;
+	border-radius: 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .profile-info h1 {
+	font-size: 2rem;
+	text-align: center;
+	margin-bottom: 1.5rem;
+  }
+  
+  .profile-info p {
+	font-size: 1.1rem;
+	margin-bottom: 0.5rem;
+  }
