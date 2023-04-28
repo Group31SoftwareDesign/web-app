@@ -35,10 +35,15 @@ function checkNotLoggedIn(req, res, next) {
   next();
 }
 
-app.get('/', (req, res) => {
-  if (!req.session.userId) {
-    return res.redirect('/login');
+async function hasRegisteredState(req,res, next) {
+  const user = await User.findById(req.session.userId);
+  if (!user.state) {
+    return res.redirect('/ProfileManager');
   }
+  next();
+}
+
+app.get('/', (req, res) => {
   res.redirect('/index');
 });
 
@@ -66,17 +71,17 @@ app.get('/ProfileManager',checkNotLoggedIn, async (req, res) => {
     res.render('profilemanager', { user });
 });
 
-app.get('/index',checkNotLoggedIn,  async (req, res) => {
+app.get('/index',checkNotLoggedIn, hasRegisteredState ,async (req, res) => {
 
     const user = await User.findById(req.session.userId);
     res.render('index', { messages: {}, user: { fullname: user.name, email: user.email, password: user.password, address1: user.address1, address2: user.address2, city: user.city, state: user.state, zipcode: user.zipcode } });
 });
 
-app.get('/FuelQuoteForm',checkNotLoggedIn,(req, res) => {
+app.get('/FuelQuoteForm',checkNotLoggedIn, hasRegisteredState,(req, res) => {
   res.render('fuelquoteform');
 });
 
-app.get('/FuelPurchaseHistory', checkNotLoggedIn, async (req, res) => {
+app.get('/FuelPurchaseHistory', checkNotLoggedIn, hasRegisteredState,async (req, res) => {
     const user = await User.findById(req.session.userId);
 
     // Pass the user object to the 'fuelPurchasehistory' view

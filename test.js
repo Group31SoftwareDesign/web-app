@@ -18,7 +18,22 @@ describe('Testing server routes', function() {
         done();
       });
   });
+  it('should redirect the user to /index if they are logged in', function(done) {
+    const authenticatedUser = request.agent(app);
 
+    authenticatedUser
+      .post('/login')
+      .send({
+        email: 'test.user@example.com',
+        password: 'testpassword',
+      })
+      .end(function(err, response) {
+        authenticatedUser
+          .get('/')
+          .expect('Location', '/index')
+          .expect(302, done);
+      });
+  });
   it('should return status 200 for GET /login', function(done) {
     request(app)
       .get('/login')
