@@ -182,3 +182,4 @@ const server = app.listen(3000, () => {
 
 module.exports = app;
 module.exports.checkLoggedIn = checkLoggedIn;
+module.exports.calculatePricePerGallon = calculatePricePerGallon;
