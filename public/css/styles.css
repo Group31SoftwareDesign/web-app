@@ -4,7 +4,6 @@
 	padding: 0;
 	font-family: 'Poppins', sans-serif;
 }
-/* styles.css */
 
 #purchase_history {
 	background-color: #f8f8f8;
@@ -49,8 +48,8 @@
 	padding: 0;
 	border: none;
 	background-color: transparent;
-	/* add any other styles you want to remove */
-  }
+}
+
 body {
 	font-family: Arial, sans-serif;
 	background-color: #f5f5f5;
@@ -70,9 +69,6 @@ h1 {
 	color: #333;
 }
 
-
-
-/* navigation bar */
 header {
 	padding: 0;
 	background-color: #333;
@@ -107,8 +103,6 @@ ul {
 	background-color: #fff;
 	color: black;
   }
-
-/* end of navbar */
 
 form{
 	background-color: #fff;
@@ -153,8 +147,6 @@ button:hover {
 	background-color: #3e8e41;
 }
 
-/* Styles for registration page only */
-
 body.registration-page {
 	background-color: #f5f5f5;
 }
@@ -179,9 +171,6 @@ button.registration-page {
 button.registration-page:hover {
 	background-color: #1565c0;
 }
-
-
-/* Styles for login page */
 
 .login-form {
 	padding-bottom: 40px;

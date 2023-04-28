@@ -24,16 +24,6 @@ h1 {
 	color: #333;
 }
 
-/*.background-image {
-	background-image: url('./fossil-fuel3.jpeg');
-	background-size: cover;
-	background-repeat: no-repeat;
-	background-position: center;
-	height: 100vh;
-}
-*/
-
-/* navigation bar */
 header {
 	padding: 0;
 	background-color: #333;
@@ -68,8 +58,6 @@ ul {
 	background-color: #fff;
 	color: black;
   }
-
-/* end of navbar */
 
 form{
 	background-color: #fff;

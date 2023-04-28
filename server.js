@@ -83,8 +83,6 @@ app.get('/FuelQuoteForm',checkNotLoggedIn, hasRegisteredState,(req, res) => {
 
 app.get('/FuelPurchaseHistory', checkNotLoggedIn, hasRegisteredState,async (req, res) => {
     const user = await User.findById(req.session.userId);
-
-    // Pass the user object to the 'fuelPurchasehistory' view
     res.render('fuelPurchasehistory', { user });
 });
 
@@ -100,14 +98,9 @@ async function calculatePricePerGallon(user, gallons) {
 app.post('/submit-fuel-quote', async (req, res) => {
   const { gallons, deliveryAddress, date } = req.body;
   const user = await User.findById(req.session.userId);
-
-  // Calculate the price per gallon using the calculatePricePerGallon function
   const suggestedPricePerGallon = await calculatePricePerGallon(user, gallons);
-
-  // Calculate the total amount due
   const totalAmountDue = gallons * suggestedPricePerGallon;
 
-  // Create a fuelQuote object
   const fuelQuote = {
     gallons: gallons,
     deliveryAddress: deliveryAddress,
@@ -116,7 +109,6 @@ app.post('/submit-fuel-quote', async (req, res) => {
     totalAmount: totalAmountDue.toFixed(2)
   };
 
-  // Push the fuelQuote object into the purchaseHistory array
   user.purchaseHistory.push(fuelQuote);
 
   await user.save();
@@ -136,58 +128,6 @@ app.post('/get-quote', async (req, res) => {
   });
 });
 
-
-// app.post('/submit-fuel-quote', async (req, res) => {
-//     const { gallons, deliveryAddress, date, price, total } = req.body;
-//     const user = await User.findById(req.session.userId);
-
-//     // Create a fuelQuote object
-//     const fuelQuote = {
-//       gallons: gallons,
-//       deliveryAddress: deliveryAddress,
-//       deliveryDate: date,
-//       pricePerGallon: price,
-//       totalAmount: total
-//     };
-
-//     // Push the fuelQuote object into the purchaseHistory array
-//     user.purchaseHistory.push(fuelQuote);
-
-//     await user.save();
-//     res.redirect('/FuelPurchaseHistory');
-// });
-// app.post('/submit-fuel-quote', async (req, res) => {
-//   const { gallons, deliveryAddress, date } = req.body;
-//   const user = await User.findById(req.session.userId);
-
-//   // Calculate the price per gallon using the pricing module
-//   const currentPricePerGallon = 1.5; // Constant for simplicity
-//   const locationFactor = user.state === 'Texas' ? 0.02 : 0.04;
-//   const rateHistoryFactor = user.purchaseHistory.length > 0 ? 0.01 : 0;
-//   const gallonsRequestedFactor = gallons > 1000 ? 0.02 : 0.03;
-//   const companyProfitFactor = 0.1;
-//   const margin = currentPricePerGallon * (locationFactor - rateHistoryFactor + gallonsRequestedFactor + companyProfitFactor);
-//   const suggestedPricePerGallon = currentPricePerGallon + margin;
-
-//   // Calculate the total amount due
-//   const totalAmountDue = gallons * suggestedPricePerGallon;
-
-//   // Create a fuelQuote object
-//   const fuelQuote = {
-//     gallons: gallons,
-//     deliveryAddress: deliveryAddress,
-//     deliveryDate: date,
-//     pricePerGallon: suggestedPricePerGallon.toFixed(3),
-//     totalAmount: totalAmountDue.toFixed(2)
-//   };
-
-//   // Push the fuelQuote object into the purchaseHistory array
-//   user.purchaseHistory.push(fuelQuote);
-
-//   await user.save();
-//   res.redirect('/FuelPurchaseHistory');
-// });
-
 app.post('/login', async (req, res) => {
       const { email, password } = req.body;
       const user = await User.findOne({ email });
@@ -199,7 +139,6 @@ app.post('/login', async (req, res) => {
         return res.render('login', { messages: { error: 'Invalid credentials' } });
       }
       req.session.userId = user._id;
-      // res.render('index', { messages: {}, user: { fullname: user.name, email: user.email, password: user.password } });
       res.redirect('/login');
   });
   
