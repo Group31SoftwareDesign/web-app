@@ -35,8 +35,16 @@ function checkNotLoggedIn(req, res, next) {
   next();
 }
 
+app.get('/', (req, res) => {
+  if (!req.session.userId) {
+    return res.redirect('/login');
+  }
+  res.redirect('/index');
+});
+
+
 app.get('/login',checkLoggedIn, (req, res) => {
-  res.render('login', { messages: {} });
+  res.render('login');
 });
 
 app.get('/public/css/styles.css', (req, res) => {
@@ -44,14 +52,13 @@ app.get('/public/css/styles.css', (req, res) => {
 });
 
 app.get('/register',checkLoggedIn,(req, res) => {
-res.render('register');
+  res.render('register');
 });
 
 app.get('/logout', checkNotLoggedIn,(req, res) => {
-
-    req.session.destroy(err => {
-      res.redirect('/login');
-    });
+  req.session.destroy(err => {
+    res.redirect('/login');
+  });
 });
 
 app.get('/ProfileManager',checkNotLoggedIn, async (req, res) => {
