@@ -42,9 +42,8 @@ app.get('/', (req, res) => {
   res.redirect('/index');
 });
 
-
 app.get('/login',checkLoggedIn, (req, res) => {
-  res.render('login');
+  res.render('login', { messages: {} });
 });
 
 app.get('/public/css/styles.css', (req, res) => {
