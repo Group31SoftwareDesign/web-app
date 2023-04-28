@@ -22,49 +22,49 @@ describe('Testing server routes', function() {
   });
 
   describe('GET requests', function() {
-    it('should return status 200 for GET /login', function(done) {
+    it('returns 200 for GET /login', function(done) {
       request(app)
         .get('/login')
         .expect(200, done);
     });
 
-    it('should return status 200 for GET /register', function(done) {
+    it('returns 200 for GET /register', function(done) {
       request(app)
         .get('/register')
         .expect(200, done);
     });
 
-    it('should return status 200 for GET /public/css/styles.css', function(done) {
+    it('returns 200 for GET /public/css/styles.css', function(done) {
       request(app)
         .get('/public/css/styles.css')
         .expect(200, done);
     });
 
-    it('should return status 200 for GET /ProfileManager when logged in', function(done) {
+    it('returns 200 for GET /ProfileManager when logged in', function(done) {
       authenticatedUser
         .get('/ProfileManager')
         .expect(200, done);
     });
 
-    it('should return status 200 for GET /index when logged in', function(done) {
+    it('returns 200 for GET /index when logged in', function(done) {
       authenticatedUser
         .get('/index')
         .expect(200, done);
     });
 
-    it('should return status 200 for GET /FuelQuoteForm when logged in', function(done) {
+    it('returns 200 for GET /FuelQuoteForm when logged in', function(done) {
       authenticatedUser
         .get('/FuelQuoteForm')
         .expect(200, done);
     });
 
-    it('should return status 200 for GET /FuelPurchaseHistory when logged in', function(done) {
+    it('returns 200 for GET /FuelPurchaseHistory when logged in', function(done) {
       authenticatedUser
         .get('/FuelPurchaseHistory')
         .expect(200, done);
     });
 
-    it('should return status 200 for GET /ProfileManager after navigating to /FuelPurchaseHistory', function(done) {
+    it('returns 200 for GET /ProfileManager after navigating to /FuelPurchaseHistory', function(done) {
       authenticatedUser
         .get('/FuelPurchaseHistory')
         .then(() => {
@@ -76,7 +76,7 @@ describe('Testing server routes', function() {
   });
 
   describe('POST requests', function() {
-    it('should return status 200 for POST /login with valid credentials', function(done) {
+    it('returns 200 for POST /login with valid credentials', function(done) {
       request(app)
         .post('/login')
         .send({
@@ -86,7 +86,7 @@ describe('Testing server routes', function() {
         .expect(302, done);
     });
 
-    it('should return status 200 for POST /login with invalid credentials', function(done) {
+    it('returns 200 for POST /login with invalid credentials', function(done) {
       request(app)
         .post('/login')
         .send({
@@ -96,7 +96,7 @@ describe('Testing server routes', function() {
         .expect(200, done);
     });
 
-    it('should return status 200 for POST /login with invalid email', function(done) {
+    it('returns 200 for POST /login with invalid email', function(done) {
       request(app)
         .post('/login')
         .send({
@@ -106,7 +106,7 @@ describe('Testing server routes', function() {
         .expect(200, done);
     });
 
-    it('should return status 200 for POST /register with existing email', function(done) {
+    it('returns 200 for POST /register with existing email', function(done) {
       request(app)
         .post('/register')
         .send({
@@ -117,7 +117,7 @@ describe('Testing server routes', function() {
         .expect(200, done);
     });
 
-    it('should return status 302 for POST/register with new email', function(done) {
+    it('returns 302 for POST/register with new email', function(done) {
       request(app)
       .post('/register')
       .send({
@@ -140,7 +140,7 @@ describe('Testing server routes', function() {
     });
 });
 
-it('should return status 302 for POST /submit-fuel-quote with valid data', function(done) {
+it('returns 302 for POST /submit-fuel-quote with valid data', function(done) {
   authenticatedUser
     .post('/get-quote')
     .send({
@@ -166,7 +166,7 @@ it('should return status 302 for POST /submit-fuel-quote with valid data', funct
     });
 });
 
-it('should return status 200 for POST /ProfileManager with valid data', function(done) {
+it('returns 200 for POST /ProfileManager with valid data', function(done) {
   authenticatedUser
     .post('/update-profile')
     .send({
@@ -182,40 +182,40 @@ it('should return status 200 for POST /ProfileManager with valid data', function
 });
 
 describe('Route access and redirection', function() {
-it('should redirect the user to /index if they are logged in', function(done) {
-const authenticatedUser = request.agent(app);
-authenticatedUser
-.post('/login')
-.send({
-  email: 'test.user@example.com',
-  password: 'testpassword',
-})
-.end(function(err, response) {
+  it('redirects the user to /index if they are logged in', function(done) {
+  const authenticatedUser = request.agent(app);
   authenticatedUser
-    .get('/')
-    .expect('Location', '/index')
-    .expect(302, done);
-});
-});
+  .post('/login')
+  .send({
+    email: 'test.user@example.com',
+    password: 'testpassword',
+  })
+  .end(function(err, response) {
+    authenticatedUser
+      .get('/')
+      .expect('Location', '/index')
+      .expect(302, done);
+  });
+  });
 
-it('should redirect to /login after GET /logout', function(done) {
-authenticatedUser
-.get('/logout')
-.expect('Location', '/login')
-.expect(302, done);
-});
-
-it('should not have access to protected routes after GET /logout', function(done) {
-authenticatedUser
-.get('/logout')
-.end(() => {
+  it('redirects to /login after GET /logout', function(done) {
   authenticatedUser
-    .get('/ProfileManager')
-    .expect(302, done);
-});
+  .get('/logout')
+  .expect('Location', '/login')
+  .expect(302, done);
+  });
+
+  it('checks access of GET /logout', function(done) {
+  authenticatedUser
+  .get('/logout')
+  .end(() => {
+    authenticatedUser
+      .get('/ProfileManager')
+      .expect(302, done);
+  });
 });
 
-it('should redirect the user to the index page if they are already logged in', function() {
+it('redirects the user to the index page if they are already logged in', function() {
 const req = { session: { userId: '123' } };
 const res = { redirect: function(url) { this.url = url; } };
 const next = function() {};
@@ -226,7 +226,7 @@ assert.strictEqual(res.url, '/index');
 });
 });
 
-describe('Register new user, log in, and access /index', function() {
+describe('Registers a new user, log in, and access /index', function() {
 let newUserEmail = 'new.user@example.com';
 afterEach(async function() {
   try {
@@ -236,7 +236,7 @@ afterEach(async function() {
     console.error('Error deleting user:', error);
     }
     });
-    it('should return status 302 for POST /register with new email and access /index with status 200', function(done) {
+    it('returns 302 for POST /register with new email and access /index with status 200', function(done) {
       request(app)
         .post('/register')
         .send({
@@ -272,7 +272,7 @@ afterEach(async function() {
     });
   });
   describe('Testing calculatePricePerGallon function', () => {
-    it('should return the correct price per gallon for a user not in Texas, with no purchase history, and requesting less than 1000 gallons', async () => {
+    it('returns the correct price per gallon for a user not in Texas, with no purchase history, and requesting less than 1000 gallons', async () => {
       const user = new User({
         name: 'Test User',
         email: 'test@example.com',
@@ -284,7 +284,6 @@ afterEach(async function() {
       const gallons = 500;
       const pricePerGallon = await calculatePricePerGallon(user, gallons);
   
-      // Use the formula to calculate the expected price per gallon
       const currentPricePerGallon = 1.5;
       const locationFactor = 0.04;
       const rateHistoryFactor = 0;
@@ -296,7 +295,7 @@ afterEach(async function() {
       expect(pricePerGallon).to.equal(expectedPricePerGallon);
     });
 
-    it('should return the correct price per gallon for a user in Texas, with no purchase history, and requesting 500 gallons', async () => {
+    it('returns the correct price per gallon for a user in Texas, with no purchase history, and requesting 500 gallons', async () => {
       const user = {
         state: 'Texas',
         purchaseHistory: []
