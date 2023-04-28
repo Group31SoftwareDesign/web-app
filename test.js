@@ -18,6 +18,7 @@ describe('Testing server routes', function() {
         done();
       });
   });
+  
   it('should redirect the user to /index if they are logged in', function(done) {
     const authenticatedUser = request.agent(app);
 
